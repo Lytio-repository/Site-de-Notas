@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Notas</title>
+
+    <style>
+            body{
+                background-color: #242f44;
+                color: white;
+                font-family: 'Roboto Condensed', sans-serif;
+                margin: 0;
+                padding: 20px;
+                overflow-x: hidden;
+            }
+            .capa-perfil{
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+                border: 5px solid #000000;
+                position: absolute;
+                left: 20px;
+                top: 20px;
+                flex-wrap: wrap;
+                
+                z-index: 10px;
+            }
+            .search-container{
+                flex-wrap: wrap;
+                text-align:right;
+                justify-content: space-between;
+                left: 10px;
+                margin-top: 100px;
+                margin-bottom: 200px;
+            }
+            .search-container h1 {
+                position: relative;
+                right: 80px;
+            }
+            .header-content {
+                flex: 1;               
+                text-align: right;     
+                min-width: 300px;      
+            }
+            input[type="text"]{
+                padding: 10px;
+                width: 400px;
+                height: 30px;
+                border-radius: 30px;
+                border: none;
+                outline: none;
+                text-align: center;
+                font-size: larger;
+            }
+            @media (max-width: 768px) {
+                .search-container {
+                    justify-content: center; /* Centraliza tudo no celular */
+                    text-align: center;
+                }
+                .header-content {
+                    text-align: center;     /* Texto centralizado no celular */
+                    order: 26;               /* Garante que a busca fique abaixo da foto */
+                }
+                .capa-perfil {
+                                  /* Foto em primeiro no topo */
+                    width: 150px;
+                    height: 150px;
+                    position: relative;
+                    top: -15px;
+                    
+                }
+                .input[type="text"]{
+                    text-align: center;     /* Texto centralizado no celular */
+                    position: relative;
+                    
+                }
+                .search-container h1 {
+                position: relative;
+                right: -10px;
+            }
+
+            }
+            .games-grid{
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .game-card{
+                background-color: #1e1e1e;
+                border-radius: 10px;
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+            .game-card:hover{
+                transform: scale(1.05);
+            }
+            .game-card h3 {
+                margin: 10px 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+                display: block;
+            }
+            #rateGameTitle {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal;
+                max-width: 200px;
+                text-align: center;
+                line-height: 1.2;
+            }
+            .game-cover {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+                border-radius: 5px;
+            }
+            .fab{
+                position:fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #6200ea;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 15px 25px;
+                font-size: 16px;
+                cursor: pointer;
+                box-shadow: 0 4px 7px rgba(0,0,0,0.3);
+            }
+            .modal{
+                display: none;
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background-color: rgba(0,0,0,0.8); 
+                justify-content: center;
+                align-items: center; 
+                z-index: 1000;
+            }
+            .modal-content{
+                background-color: #2d2d2d;
+                padding: 30px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 500px;
+                position: relative;
+            }
+            .modal-content{
+                max-height: 80vh;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+            }
+            .modal-content h2 {
+                position: relative;
+                text-align: center;
+            }
+            .close-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+
+                font-size: 30px;
+                font-weight: bold;
+
+                cursor: pointer;
+                color: rgb(255, 255, 255);
+                transition: 0.3s;
+                line-height: 30px;
+
+                border: 10px solid #000000;
+                width: 20px;
+                height: 20px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                background-color: #000000;
+                border-radius: 10px;
+            }
+
+            .close-btn:hover{
+                color: #ffffff;
+                border:10px solid #800000;
+                background-color: #800000;
+            }
+            .btn{
+                background-color: #6200ea; 
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 10px;
+            }
+            #newGameName {
+                margin: 10px;
+            }
+            #newGameImage{
+                margin: 10px;
+            }
+
+            .editable-container{
+                position: relative;
+                width: 100px;
+                height: 150px;
+                cursor: pointer;
+                overflow: hidden;
+                border-radius: 5px;
+            }
+            .editable-container .main-cover {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: 0.3s;
+            }
+            .image-overlay{
+                position:absolute;
+                top: 0; Left: 0;
+                width: 100%; height: 100%;
+                background-color: rgba(0, 0, 0, 0.6);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                opacity: 0;
+                transition: 0.3s;
+                font-size: 30px;
+            }
+            .camera-icon{
+                width: 40px;
+                height: 40px;
+                object-fit: contain;
+                filter: none;
+                transform: none;
+            }
+
+            .editable-container:hover .image-overlay { opacity: 1;}
+            .editable-container:hover .main-cover {
+                filter:blur(3px);
+                transform: scale(1.1);
+            }
+
+            .edit-name-icon{
+                cursor: pointer;
+                font-size: 0.8em;
+                margin-left: 10px;
+                opacity: 0.7;
+            }
+            .edit-name-icon:hover{opacity: 1; transform: scale(1.2);}
+        </style>
+
+    </head>
+    <body>
+        <div class="search-container">
+            <h1>Minha Biblioteca</h1>
+            <img class="capa-perfil" src="https://cdn.discordapp.com/attachments/701087337505095700/1465399966745891124/3a64395f-dd12-4d8a-8fb3-81a961fac336.jfif?ex=6979a051&is=69784ed1&hm=7e6cc289f088344f13d334c8c8456506c5a7a23965545c44403a99c8c38fc013&">
+            <input type="text" id="searchInput" placeholder="Pesquisar Jogo" onkeyup="filterGames()">
+        </div>
+        <div class="games-grid" id="gamesList">
+            <div class="game-card">
+                
+            </div>
+
+        </div>
+        <button class="fab" onclick="openAddModal()">+ Adicionar Jogo</button>
+
+        <div id="addModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModals()">&times;</span>
+                <h2>NOVO JOGO</h2>
+                <input type="text" id="newGameName" placeholder="Nome do Jogo">
+                <input type="text" id="newGameImage" placeholder="Link da Imagem (URL)">
+                <button class="btn" onclick="saveNewGame()">Salvar</button>
+            </div>
+        </div>
+
+        <div id="rateModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModals()">&times;</span>
+
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <h2 id="rateGameTitle" style="margin: 0;">Nome do jogo</h2>
+                    <span class="edit-name-icon" onclick="openEditNameModal()">✏️</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <div class="editable-container" onclick="openEditImageModal()">
+                        <img id="rateGameCover" src="" class="main-cover">
+                        <div class="image-overlay">
+                            <img src="https://cdn.discordapp.com/attachments/701087337505095700/1465770564420505652/Picture.png?ex=697a50b7&is=6978ff37&hm=02e82ba1f07e7bd63ecb65791ba4aebc4f78834d5d0ae880392c42e73e6d2272&" class="camera-icon">
+                        </div>
+                    </div>
+
+                    <div style="flex-grow: 1;">
+                        <h3>Média Final</h3>
+                        <div id="finalScore" style="font-size: 3em; color: #4CAF50;">0.0</div>
+                    </div>
+                </div>
+
+                <div id="slidersContainer"></div>
+
+                <button class="btn" onclick="saveRating()">Confirma Avaliação</button>
+            </div>
+        </div>
+
+        <div id="editNameModal" class="modal" style="z-index:1100;">
+            <div class="modal-content" style="max-width: 400px;">
+                <span class="close-btn" onclick="document.getElementById('editNameModal').style.display='none'">&times;</span>
+                <h3>Editar Nome</h3>
+                <input type="text" id="editNameInput" placeholder="Digite o Novo Nome">
+                <button class="btn" onclick="confirmNameChange()">Salvar</button>
+            </div>
+        </div>
+
+        <div id="editImageModal" class="modal" style="z-index:1100;">
+            <div class="modal-content" style="max-width: 400px;">
+                <span class="close-btn" onclick="document.getElementById('editImageModal').style.display='none'">&times;</span>
+                <h3>Editar Imagem</h3>
+                <input type="text" id="editImageInput" placeholder="Novo link de Imagem">
+                <button class="btn" onclick="confirmImageChange()">Salvar</button>
+            </div>
+        </div>
+        <script>
+            const categories = ["Campanha", "Jogabilidade", "Personagens", "Visual", "Trilha Sonora", "Diversão"]
+            
+            let currentGameId= null;
+            let games = [];
+
+            // Tenta pegar os dados do navegador
+            const dadosSalvos = localStorage.getItem('meusJogosSalvos');
+
+            if (dadosSalvos) {
+                // SE tiver dados salvos, transforma de volta em lista (JSON.parse)
+                games = JSON.parse(dadosSalvos);
+            }
+
+                        //SEÇÃO DE CARDS DO SITE
+                    function renderGames(){
+                        const grid = document.getElementById('gamesList');
+                        grid.innerHTML= '';
+
+                        
+                        games.forEach(game => {
+
+                            const cardHTML = `
+                                <div class="game-card" onclick="openRateModal(${game.id})">
+                                    <img src="${game.image}" class="game-cover">
+                                    <h3 title="${game.name}">${game.name}</h3>
+                                    <div class="game-score">Nota: ${game.average || 0}</div>
+                                </div>
+                            `;
+
+                            grid.innerHTML += cardHTML;
+                        })
+                    }
+
+                    renderGames();
+                        //SEÇÃO DE CARDS DO SITE
+                        
+                        //SEÇÃO DE ABRIR O ELEMENTO
+                    function openAddModal() {
+                        const modal = document.getElementById('addModal');
+                        modal.style.display = 'flex';
+                    }
+                        //SEÇÃO DE ABRIR O ELEMENTO
+
+                        //SEÇÃO DE FECHAR O ELEMENTO
+                    function closeModals() {
+                        document.getElementById("addModal").style.display = "none";
+                        document.getElementById("rateModal").style.display = "none";
+                    }
+                        //SEÇÃO DE FECHAR O ELEMENTO
+
+                        //SEÇÃO DE SALVAMENTO
+                    function saveNewGame() {
+                        const inputName = document.getElementById("newGameName");
+                        const inputImage = document.getElementById("newGameImage");
+
+                        const nameValue = inputName.value;
+                        const imageValue = inputImage.value;
+
+                        if (nameValue === ""){
+                            alert("Digita o nome ai meu parça");
+                            return;
+                        }
+                        if (imageValue === ""){
+                            alert("Quer o bagulho sem imagem?");
+                            return;
+                        }
+
+                        const newGame = {
+                            id: Date.now(),
+                            name: nameValue,
+                            image: imageValue,
+                            average: 0
+                        
+                        }
+
+                        games.push(newGame);
+                        
+                        salvarDados();
+                        renderGames()
+
+                        closeModals();
+                        inputName.value = '';
+                        inputImage.value = '';
+                    }
+                    //Parte de PESQUISA DA BIBLIOTECA//
+            function filterGames() {
+                
+                const searchInput = document.getElementById('searchInput');
+                const term = searchInput.value.toLowerCase();
+
+                const allCards = document.querySelectorAll('.game-card');
+
+                allCards.forEach(card => {
+                    const title = card.querySelector('h3').innerText.toLowerCase();
+
+                    if (title.includes(term)) {
+                        card.style.display = "block"
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+                //Parte de PESQUISA DA BIBLIOTECA//
+
+                //SEÇÃO DE NOTA
+            function openRateModal(id){
+                currentGameId = id;
+                const game = games.find(g => g.id === id);
+
+                document.getElementById('rateGameTitle').innerText = game.name;
+                document.getElementById('rateGameCover').src = game.image;
+                document.getElementById('finalScore').innerText = game.average || 0;
+
+                const container = document.getElementById('slidersContainer');
+                container.innerHTML ='';
+
+                categories.forEach(cat => {
+                    const score = game.scores ? game.scores[cat] : 0;
+
+                     //replace = TROCA // s = ESPAÇO // g = GLOBAL // Ele pega todo id da categoria e deixa com espaço nos que precisam
+
+                    const html = `
+                        <div class="rating-row"> ${/* LINHA DE NOTA */ ""}
+                            <div class="rating-header"> ${/* CABEÇALHO*/ ""}
+                                <span>${cat}</span> ${/* "cat" TA PEGANDO TUDO QUE ESTA DENTRO DAS CATEGORIAS E PONDO EM LOOP ATE O FINAL: CAMPANHA, VISUAL, TRILHA....*/ ""}
+                                <span id="display-${cat}">${score}</span> ${/* NOVAMENTE PEGANDO TUDO DA CATEGORIA E BOTANDO O "score" DO LADO*/ ""}
+                            </div>
+                            <input type="range" min="0" max="10" step="0.1" value="${score}"
+                                oninput="document.getElementById('display-${cat}').innerText = parseFloat(this.value).toFixed(1); atualizarMedia()">
+                        </div>
+                    `;
+
+                    container.innerHTML += html;
+                })
+
+                document.getElementById('rateModal').style.display = 'flex';
+            }
+                //SEÇÃO DE NOTA
+        function atualizarMedia(){
+            const sliders = document.querySelectorAll('#slidersContainer input[type="range"]');
+
+            let soma = 0;
+            let quantidade = 0;
+
+            sliders.forEach(slider => {
+                soma += parseFloat(slider.value); //purseFloat servindo pra transformar texto em numero
+                quantidade++
+            })
+
+            const media = soma/quantidade;
+
+            document.getElementById('finalScore').innerText = media.toFixed(1);
+        }
+        function openEditNameModal(){
+            const game = games.find(g => g.id === currentGameId);
+            document.getElementById('editNameInput').value = game.name;
+            document.getElementById('editNameModal').style.display = 'flex';
+        }
+
+        function confirmNameChange(){
+            const newName = document.getElementById('editNameInput').value;
+            if(!newName) return alert("Digite um nome!");
+
+            const game = games.find(g => g.id === currentGameId);
+            game.name = newName;
+
+            document.getElementById('rateGameTitle').innerText = newName;
+            
+            salvarDados();
+            renderGames();
+            document.getElementById('editNameModal').style.display='none';
+        }
+
+        function openEditImageModal() {
+            const game = games.find(g => g.id === currentGameId);
+            document.getElementById('editImageInput').value = game.image;
+            document.getElementById('editImageModal').style.display='flex';
+        }
+
+        function confirmImageChange() {
+            const newImage = document.getElementById('editImageInput').value;
+            if(!newImage) return alert("Põe um link!");
+
+            const game = games.find(g => g.id === currentGameId);
+            game.image =newImage;
+
+            document.getElementById('rateGameCover').src = newImage;
+
+            salvarDados();
+            renderGames();
+            document.getElementById('editImageModal').style.display='none';
+        }
+
+        function saveRating() {
+            atualizarMedia();
+            
+            const game = games.find(g => g.id === currentGameId);
+            const notaTexto = document.getElementById('finalScore').innerText;
+            game.average = notaTexto;
+
+            const sliders = document.querySelectorAll('#slidersContainer input[type="range"]');
+            if(!game.scores) game.scores = {};
+
+            sliders.forEach((slider, cat) => {
+                const catName = categories[cat];
+                game.scores[catName] = parseFloat(slider.value);
+            });
+
+            salvarDados();
+            renderGames();
+            closeModals();
+            
+        }
+
+        function salvarDados() {
+            localStorage.setItem('meusJogosSalvos', JSON.stringify(games));
+        }
+        </script>
+    </body>
+    </html>
