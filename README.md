@@ -2,6 +2,7 @@
 # Changelog
 ## [1.2a] - 07/02/2026
 - Arrumado sistema de notas antigos agora são integrados ao novo sistema de notas
+- Arrumado os titulos dos jogos dentro das avaliações que ficavam cortados no celular
 ## [1.2] - 07/02/2026
 - Atulizado desing dos Cards
 - Atulizado desing das avaliações
