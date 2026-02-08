@@ -1,552 +1,943 @@
 <!DOCTYPE html>
-    <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Notas</title>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Biblioteca de Jogos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-            body{
-                background-color: #242f44;
-                color: white;
-                font-family: 'Roboto Condensed', sans-serif;
-                margin: 0;
-                padding: 20px;
-                overflow-x: hidden;
-            }
-            .capa-perfil{
-                width: 200px;
-                height: 200px;
-                object-fit: cover;
-                border: 5px solid #000000;
-                position: absolute;
-                left: 20px;
-                top: 20px;
-                flex-wrap: wrap;
-                
-                z-index: 10px;
-            }
-            .search-container{
-                flex-wrap: wrap;
-                text-align:right;
-                justify-content: space-between;
-                left: 10px;
-                margin-top: 100px;
-                margin-bottom: 200px;
-            }
-            .search-container h1 {
-                position: relative;
-                right: 80px;
-            }
-            .header-content {
-                flex: 1;               
-                text-align: right;     
-                min-width: 300px;      
-            }
-            input[type="text"]{
-                padding: 10px;
-                width: 400px;
-                height: 30px;
-                border-radius: 30px;
-                border: none;
-                outline: none;
-                text-align: center;
-                font-size: larger;
-            }
-            @media (max-width: 768px) {
-                .search-container {
-                    justify-content: center; /* Centraliza tudo no celular */
-                    text-align: center;
-                }
-                .header-content {
-                    text-align: center;     /* Texto centralizado no celular */
-                    order: 26;               /* Garante que a busca fique abaixo da foto */
-                }
-                .capa-perfil {
-                                  /* Foto em primeiro no topo */
-                    width: 150px;
-                    height: 150px;
-                    position: relative;
-                    top: -15px;
-                    
-                }
-                .input[type="text"]{
-                    text-align: center;     /* Texto centralizado no celular */
-                    position: relative;
-                    
-                }
-                .search-container h1 {
-                position: relative;
-                right: -10px;
-            }
+        :root {
+            --primary: #6200ea;
+            --dark-bg: #121212;
+            --dark-bg2: #000000;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-green: #00e676;
+        }
 
-            }
-            .games-grid{
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-                padding: 20px;
-            }
-            
-            .game-card{
-                background-color: #1e1e1e;
-                border-radius: 10px;
-                padding: 10px;
-                text-align: center;
-                cursor: pointer;
-                transition: transform 0.2s;
-            }
-            .game-card:hover{
-                transform: scale(1.05);
-            }
-            .game-card h3 {
-                margin: 10px 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 100%;
-                display: block;
-            }
-            #rateGameTitle {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                white-space: normal;
-                max-width: 200px;
-                text-align: center;
-                line-height: 1.2;
-            }
-            .game-cover {
-                width: 100%;
-                height: 250px;
-                object-fit: cover;
-                border-radius: 5px;
-            }
-            .fab{
-                position:fixed;
-                bottom: 20px;
-                right: 20px;
-                background-color: #6200ea;
-                color: white;
-                border: none;
-                border-radius: 50px;
-                padding: 15px 25px;
-                font-size: 16px;
-                cursor: pointer;
-                box-shadow: 0 4px 7px rgba(0,0,0,0.3);
-            }
-            .modal{
-                display: none;
-                position: fixed;
-                top: 0; left: 0;
-                width: 100%; height: 100%;
-                background-color: rgba(0,0,0,0.8); 
-                justify-content: center;
-                align-items: center; 
-                z-index: 1000;
-            }
-            .modal-content{
-                background-color: #2d2d2d;
-                padding: 30px;
-                border-radius: 10px;
-                width: 90%;
-                max-width: 500px;
-                position: relative;
-            }
-            .modal-content{
-                max-height: 80vh;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-            }
-            .modal-content h2 {
-                position: relative;
-                text-align: center;
-            }
-            .close-btn {
-                position: absolute;
-                top: 10px;
-                right: 10px;
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Roboto Condensed', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* CABEÇALHO */
+        .search-container {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, #1f1f1f, #121212);
+            padding: 20px;
+            flex-wrap: wrap; gap: 20px;
+        }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .capa-perfil {
+            width: 80px; height: 80px; object-fit: fill;
+            border: 2px solid white; border-radius: 50%;
+        }
+        .header-left h1 {
+            font-family: 'Bebas Neue', sans-serif; font-size: 2em;
+            margin: 0; letter-spacing: 2px;
+        }
+        input[type="text"] {
+            padding: 10px 20px; width: 300px; height: 40px;
+            border: 2px solid #444; border-radius: 50px;
+            background-color: #222; color: white;
+            outline: none; text-align: center; transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--primary); width: 350px; }
 
-                font-size: 30px;
-                font-weight: bold;
+        /* GRID DE JOGOS */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 30px; padding: 40px 20px;
+        }
+        .game-card {
+            background-color: var(--card-bg); border-radius: 15px;
+            overflow: hidden; cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(98, 0, 234, 0.3);
+        }
+        .game-cover { 
+            width: 100%; 
+            height: 260px; 
+            object-fit: cover; 
+            object-position: top center; 
+        }
+        .game-info { padding: 15px; text-align: left;}
+        .game-info h3 {
+            margin: 0 0 5px 0; font-size: 1.1em;
+            width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }   
+        .game-score-badge {
+            position: absolute; top: 10px; right: 10px;
+            background-color: rgba(0,0,0,0.8); color: var(--accent-green);
+            padding: 5px 10px; border-radius: 20px;
+            font-weight: bold; border: 2px solid var(--accent-green);
+        }
 
-                cursor: pointer;
-                color: rgb(255, 255, 255);
-                transition: 0.3s;
-                line-height: 30px;
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            z-index: 2000; 
+            overflow-y: auto; 
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .modal::-webkit-scrollbar {
+            display: none;
+        }
+        /* Modal de Adicionar */
+        #addModal .modal-content {
+            background-color: #2d2d2d; padding: 30px; border-radius: 10px;
+            width: 90%; max-width: 500px; margin: 100px auto;
+            position: relative; color: white;
+        }
+        .add-tabs{ display: flex; justify-content: space-around; margin-bottom: 20px; border-bottom: 1px solid #444; }
+        .tab-btn { background: none; border: none; color: #aaa; font-size: 18px; cursor: pointer; padding: 10px; }
+        .tab-btn.active { color: white; border-bottom: 2px solid var(--primary); }
+        
+        .api-result-item {
+            display: flex; padding: 10px; border-bottom: 1px solid #444;
+            cursor: pointer; align-items: center; transition: background 0.2s;
+        }
+        .api-result-item:hover { background: #444;}
+        .api-result-item img { width: 50px; height: 50px; object-fit: cover; margin-right: 15px; border-radius: 5px; }
 
-                border: 10px solid #000000;
-                width: 20px;
-                height: 20px;
+        .game-details-container { width: 100%; max-width: 1200px; margin: 0 auto; position: relative; padding-bottom: 50px; }
+        .hero-header { position: relative; width: 100%; height: 500px; background-color: (30%, var(--dark-bg2)); overflow: hidden;}
+        .hero-background {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            z-index: 1; 
+        }
+        .hero-content {
+            position: absolute; top: 150px; left: 50%; width: 100%; transform: translateX(-50%);
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding: 0 50px; box-sizing: border-box; z-index: 2;  gap:20px;
+        }
+        .hero-left { display: flex; gap: 30px; align-items: flex-end; flex: 1; min-width: 0; }
+        
+        /* POSTER */
+        .hero-poster {
+            width: 220px; height: 330px; 
+            object-fit: cover;   
+            object-position: top center; 
+            border-radius: 30px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.8); 
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer; 
+            transition: transform 0.2s, opacity 0.2s;
+            background-color: #000;
+        }
+        .hero-poster:hover {
+            transform: scale(1.02); 
+            opacity: 0.8; 
+            border-color: var(--primary); 
+        }
+        .hero-text {
+            min-width: 0;
+            margin-right: 240px;
+        }
+        .hero-text h1 {
+            font-family: 'Bebas Neue'; font-size: 5em; margin: 0; padding: 0px;
+            line-height: 0.9; text-transform: uppercase; text-shadow: 2px 2px 10px black;
+            word-wrap: break-word; overflow-wrap: break-word;
+        }
+        .badge { background: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 4px; backdrop-filter: blur(5px); }
+        .badge.dev { background: var(--primary);}
+        
+        .hero-right { position: relative; width: 320px; height: 320px; right: 250px; flex-shrink: 0; align-self: flex-end;}
+        .score-circle-container {
+            position: relative; width: 100%; height: 100%; border-radius: 50%;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            background: #000; border: 5px solid rgba(255, 255, 255, 0.1);
+        }
+        .score-value {
+            position: relative; z-index: 2; font-family: 'Bebas Neue';
+            font-size: 8em; color: white; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .score-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform: rotate(-90deg); z-index: 3; pointer-events: none;
+        }
+        .score-path {
+            fill: none; stroke: var(--accent-green); stroke-width: 8;
+            stroke-linecap: round; stroke-dasharray: 630; stroke-dashoffset: 630;
+            transition: stroke-dashoffset 1s ease-out;
+        }
 
-                display: flex;
-                align-items: center;
-                justify-content: center;
+        .content-grid { display: grid; grid-template-columns: 1fr 350px; gap: 40px; padding: 0; margin-top: 20px; }
+        
+        .evaluation-section {
+            background: rgba(30, 30, 30, 0.6); padding: 30px;
+            border-radius: 20px; 
+            display: grid; 
+            grid-template-columns: 600px 1fr; 
+            gap: 40px; 
+            align-items: center;
+        }
+        .radar-chart-box { 
+            width: 600px; 
+            height: 500px; 
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sliders-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+        }
+        .slider-row {
+            margin-bottom: 25px; 
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between; 
+            font-size: 1.3em; 
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        /* ESTILO DOS SLIDERS (BOLINHA NEON) */
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            margin: 0;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #333; height: 6px; border-radius: 5px;
+        }
+        input[type="range"]::-moz-range-track {
+            background: #333; height: 6px; border-radius: 5px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            margin-top: -7px; 
+            background-color: white; 
+            height: 20px; width: 20px; border-radius: 50%;
+            border: 2px solid var(--slider-color); 
+            box-shadow: 0 0 10px var(--slider-color); 
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        input[type="range"]::-moz-range-thumb {
+            border: none; background-color: white;
+            height: 20px; width: 20px; border-radius: 50%;
+            border: 2px solid var(--slider-color);
+            box-shadow: 0 0 10px var(--slider-color);
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-moz-range-thumb:hover { transform: scale(1.2); }
 
-                background-color: #000000;
-                border-radius: 10px;
-            }
+        .specs-card { background: #1e1e1e; border-radius: 20px; padding: 25px; border: 1px solid #333; }
+        .spec-item { margin-bottom: 15px; border-bottom: 1px solid #2a2a2a; padding-bottom: 10px;}
+        .spec-label { font-size: 0.8em; color: #888; text-transform: uppercase; display: block;}
+        .spec-value { font-size: 1.1em; color: white; font-weight: bold;}
 
-            .close-btn:hover{
-                color: #ffffff;
-                border:10px solid #800000;
-                background-color: #800000;
-            }
-            .btn{
-                background-color: #6200ea; 
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                width: 100%;
-                margin-top: 10px;
-            }
-            #newGameName {
-                margin: 10px;
-            }
-            #newGameImage{
-                margin: 10px;
-            }
+        /* Botões */
+        .action-btn {
+            background-color: var(--primary); color: white; border: none;
+            padding: 15px 30px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: 0.2s; cursor: pointer;
+        }
+        .action-btn:hover { transform: scale(1.05); background: #7c43bd; }
+        .close-modal-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none; cursor: pointer;
+            font-size: 4em; color: #ffffff; z-index: 100;
+            background-color: #002beb; border: 5px solid #002beb;
+            box-shadow: 0 0 50px #002beb; border-radius: 4px 40px;
+        }
+        .close-modal-btn:hover{
+            font-size: 4em; color: #ffffff;
+            background-color: #b30000; border: 5px solid #b30000;
+            box-shadow: 0 0 50px #b30000; border-radius: 4px 40px;
+            transition: 0.3s;  transform: scale(1.2);
+        }
+        .modal-actions { position: fixed; bottom: 30px; right: 30px; z-index: 2001; }
 
-            .editable-container{
-                position: relative;
-                width: 100px;
-                height: 150px;
-                cursor: pointer;
-                overflow: hidden;
-                border-radius: 5px;
+        @media (max-width: 900px) {
+            .hero-content { flex-direction: column; align-items: center; text-align: center; top: 50px; }
+            .hero-left { flex-direction: column; align-items: center; }
+            .hero-poster { width: 180px; height: 270px; }
+            .content-grid { grid-template-columns: 1fr; padding: 20px; }
+            .evaluation-section { grid-template-columns: 1fr; }
+            .radar-chart-box { width: 300px; height: 300px; }
+            .search-container { flex-direction: column; }
+            .hero-text h1 { 
+                font-size: 2.5em; 
+                line-height: 1.1; 
             }
-            .editable-container .main-cover {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: 0.3s;
+            .hero-poster {
+            position: relative;
+            right: 80px;
             }
-            .image-overlay{
-                position:absolute;
-                top: 0; Left: 0;
-                width: 100%; height: 100%;
-                background-color: rgba(0, 0, 0, 0.6);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                opacity: 0;
-                transition: 0.3s;
-                font-size: 30px;
+            .hero-right { position: relative; width: 140px; height: 140px; bottom: 360px; left: 20px; flex-shrink: 0; align-self: flex-end;}
+            .score-value { font-size: 5em; }
+            .radar-chart-box { 
+            width: 300px;
+            height: 200px; 
             }
-            .camera-icon{
-                width: 40px;
-                height: 40px;
-                object-fit: contain;
-                filter: none;
-                transform: none;
+            .close-modal-btn {
+            font-size: 3em;
             }
-
-            .editable-container:hover .image-overlay { opacity: 1;}
-            .editable-container:hover .main-cover {
-                filter:blur(3px);
-                transform: scale(1.1);
+            .close-modal-btn:hover{
+            font-size: 3em;
+            transition: 0.3s;  transform: scale(1.2);
             }
-
-            .edit-name-icon{
-                cursor: pointer;
-                font-size: 0.8em;
-                margin-left: 10px;
-                opacity: 0.7;
-            }
-            .edit-name-icon:hover{opacity: 1; transform: scale(1.2);}
-        </style>
-
-    </head>
-    <body>
-        <div class="search-container">
+        }
+        #updateImageModal .modal-content {
+            background-color: #2d2d2d;
+            padding: 30px; border-radius: 10px;
+            margin: 15vh auto; width: 90%; max-width: 400px; 
+            position: relative; color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+        }
+        .slider-label span:last-child {
+            width: 40px; text-align: right; font-variant-numeric: tabular-nums; 
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="search-container"> 
+        <div class="header-left">
+            <img class="capa-perfil" src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/1pNoSUgJoMSr0b1AoFQrNN/cef9d4a164ad05f8da4aaa0154dbd469/Gaming-controller.png">
             <h1>Minha Biblioteca</h1>
-            <img class="capa-perfil" src="https://cdn.discordapp.com/attachments/701087337505095700/1465399966745891124/3a64395f-dd12-4d8a-8fb3-81a961fac336.jfif?ex=6979a051&is=69784ed1&hm=7e6cc289f088344f13d334c8c8456506c5a7a23965545c44403a99c8c38fc013&">
-            <input type="text" id="searchInput" placeholder="Pesquisar Jogo" onkeyup="filterGames()">
         </div>
-        <div class="games-grid" id="gamesList">
-            <div class="game-card">
-                
+        <input type="text" placeholder="Pesquisar na Coleção" onkeyup="filterGames(this.value)">
+    </div>
+
+    <div class="games-grid" id="gamesList"></div>
+
+    <button class="action-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 100;" onclick="openAddModal()">+ Adicionar Jogo</button>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
+            <h2>Adicionar Novo Jogo</h2>
+
+            <div class="add-tabs">
+                <button class="tab-btn active" id="btnTabSearch" onclick="switchTab('search')">Automático</button>
+                <button class="tab-btn" id="btnTabManual" onclick="switchTab('manual')">Manual</button>
             </div>
-
-        </div>
-        <button class="fab" onclick="openAddModal()">+ Adicionar Jogo</button>
-
-        <div id="addModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" onclick="closeModals()">&times;</span>
-                <h2>NOVO JOGO</h2>
-                <input type="text" id="newGameName" placeholder="Nome do Jogo">
-                <input type="text" id="newGameImage" placeholder="Link da Imagem (URL)">
-                <button class="btn" onclick="saveNewGame()">Salvar</button>
-            </div>
-        </div>
-
-        <div id="rateModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" onclick="closeModals()">&times;</span>
-
-                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                    <h2 id="rateGameTitle" style="margin: 0;">Nome do jogo</h2>
-                    <span class="edit-name-icon" onclick="openEditNameModal()">✏️</span>
-                </div>
-
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <div class="editable-container" onclick="openEditImageModal()">
-                        <img id="rateGameCover" src="" class="main-cover">
-                        <div class="image-overlay">
-                            <img src="https://cdn.discordapp.com/attachments/701087337505095700/1465770564420505652/Picture.png?ex=697a50b7&is=6978ff37&hm=02e82ba1f07e7bd63ecb65791ba4aebc4f78834d5d0ae880392c42e73e6d2272&" class="camera-icon">
-                        </div>
-                    </div>
-
-                    <div style="flex-grow: 1;">
-                        <h3>Média Final</h3>
-                        <div id="finalScore" style="font-size: 3em; color: #4CAF50;">0.0</div>
-                    </div>
-                </div>
-
-                <div id="slidersContainer"></div>
-
-                <button class="btn" onclick="saveRating()">Confirma Avaliação</button>
-            </div>
-        </div>
-
-        <div id="editNameModal" class="modal" style="z-index:1100;">
-            <div class="modal-content" style="max-width: 400px;">
-                <span class="close-btn" onclick="document.getElementById('editNameModal').style.display='none'">&times;</span>
-                <h3>Editar Nome</h3>
-                <input type="text" id="editNameInput" placeholder="Digite o Novo Nome">
-                <button class="btn" onclick="confirmNameChange()">Salvar</button>
-            </div>
-        </div>
-
-        <div id="editImageModal" class="modal" style="z-index:1100;">
-            <div class="modal-content" style="max-width: 400px;">
-                <span class="close-btn" onclick="document.getElementById('editImageModal').style.display='none'">&times;</span>
-                <h3>Editar Imagem</h3>
-                <input type="text" id="editImageInput" placeholder="Novo link de Imagem">
-                <button class="btn" onclick="confirmImageChange()">Salvar</button>
-            </div>
-        </div>
-        <script>
-            const categories = ["Campanha", "Jogabilidade", "Personagens", "Visual", "Trilha Sonora", "Diversão"]
             
-            let currentGameId= null;
-            let games = [];
+            <div id="sectionSearch">
+                <input type="text" id="apiSearchInput" placeholder="Digite o Nome do Jogo" onkeyup="searchOnlineGames(this.value)" style="width:100%; box-sizing: border-box;">
+                <div id="apiResultsList" style="margin-top: 10px; max-height: 300px; overflow-y:auto;"></div>
+            </div>
 
-            // Tenta pegar os dados do navegador
-            const dadosSalvos = localStorage.getItem('meusJogosSalvos');
+            <div id="sectionManual" style="display: none;">
+                <input type="text" id="manualName" placeholder="Digite o Nome" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;">
+                <input type="text" id="manualImageCapa" placeholder="Url da CAPA do Jogo" style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+                <input type="text" id="manualImageBg" placeholder="Url do WALLPAPER de fundo" style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+                <input type="text" id="manualDevelopers" placeholder="Nome da Desenvolvedora" style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+                <button class="action-btn" style="width:100%" onclick="saveManualGame()">Salvar Jogo</button>
+            </div>
+        </div>
+    </div>
 
-            if (dadosSalvos) {
-                // SE tiver dados salvos, transforma de volta em lista (JSON.parse)
-                games = JSON.parse(dadosSalvos);
-            }
-
-                        //SEÇÃO DE CARDS DO SITE
-                    function renderGames(){
-                        const grid = document.getElementById('gamesList');
-                        grid.innerHTML= '';
-
-                        
-                        games.forEach(game => {
-
-                            const cardHTML = `
-                                <div class="game-card" onclick="openRateModal(${game.id})">
-                                    <img src="${game.image}" class="game-cover">
-                                    <h3 title="${game.name}">${game.name}</h3>
-                                    <div class="game-score">Nota: ${game.average || 0}</div>
-                                </div>
-                            `;
-
-                            grid.innerHTML += cardHTML;
-                        })
-                    }
-
-                    renderGames();
-                        //SEÇÃO DE CARDS DO SITE
-                        
-                        //SEÇÃO DE ABRIR O ELEMENTO
-                    function openAddModal() {
-                        const modal = document.getElementById('addModal');
-                        modal.style.display = 'flex';
-                    }
-                        //SEÇÃO DE ABRIR O ELEMENTO
-
-                        //SEÇÃO DE FECHAR O ELEMENTO
-                    function closeModals() {
-                        document.getElementById("addModal").style.display = "none";
-                        document.getElementById("rateModal").style.display = "none";
-                    }
-                        //SEÇÃO DE FECHAR O ELEMENTO
-
-                        //SEÇÃO DE SALVAMENTO
-                    function saveNewGame() {
-                        const inputName = document.getElementById("newGameName");
-                        const inputImage = document.getElementById("newGameImage");
-
-                        const nameValue = inputName.value;
-                        const imageValue = inputImage.value;
-
-                        if (nameValue === ""){
-                            alert("Digita o nome ai meu parça");
-                            return;
-                        }
-                        if (imageValue === ""){
-                            alert("Quer o bagulho sem imagem?");
-                            return;
-                        }
-
-                        const newGame = {
-                            id: Date.now(),
-                            name: nameValue,
-                            image: imageValue,
-                            average: 0
-                        
-                        }
-
-                        games.push(newGame);
-                        
-                        salvarDados();
-                        renderGames()
-
-                        closeModals();
-                        inputName.value = '';
-                        inputImage.value = '';
-                    }
-                    //Parte de PESQUISA DA BIBLIOTECA//
-            function filterGames() {
-                
-                const searchInput = document.getElementById('searchInput');
-                const term = searchInput.value.toLowerCase();
-
-                const allCards = document.querySelectorAll('.game-card');
-
-                allCards.forEach(card => {
-                    const title = card.querySelector('h3').innerText.toLowerCase();
-
-                    if (title.includes(term)) {
-                        card.style.display = "block"
-                    } else {
-                        card.style.display = "none";
-                    }
-                });
-            }
-                //Parte de PESQUISA DA BIBLIOTECA//
-
-                //SEÇÃO DE NOTA
-            function openRateModal(id){
-                currentGameId = id;
-                const game = games.find(g => g.id === id);
-
-                document.getElementById('rateGameTitle').innerText = game.name;
-                document.getElementById('rateGameCover').src = game.image;
-                document.getElementById('finalScore').innerText = game.average || 0;
-
-                const container = document.getElementById('slidersContainer');
-                container.innerHTML ='';
-
-                categories.forEach(cat => {
-                    const score = game.scores ? game.scores[cat] : 0;
-
-                     //replace = TROCA // s = ESPAÇO // g = GLOBAL // Ele pega todo id da categoria e deixa com espaço nos que precisam
-
-                    const html = `
-                        <div class="rating-row"> ${/* LINHA DE NOTA */ ""}
-                            <div class="rating-header"> ${/* CABEÇALHO*/ ""}
-                                <span>${cat}</span> ${/* "cat" TA PEGANDO TUDO QUE ESTA DENTRO DAS CATEGORIAS E PONDO EM LOOP ATE O FINAL: CAMPANHA, VISUAL, TRILHA....*/ ""}
-                                <span id="display-${cat}">${score}</span> ${/* NOVAMENTE PEGANDO TUDO DA CATEGORIA E BOTANDO O "score" DO LADO*/ ""}
+    <div id="gameModal" class="modal">
+        <button class="close-modal-btn" onclick="closeGameModal()">&times;</button>
+        <div class="hero-header">
+                <div class="hero-background" id="heroBg"></div>
+                <div class="hero-content">
+                    <div class="hero-left">
+                        <img src="" class="hero-poster" id="heroCover" onclick="openUpdateImageModal()" title="Clique para alterar a capa">
+                        <div class="hero-text">
+                            <h1 id="heroTitle">NOME DO JOGO</h1>
+                            <div class="hero-meta">
+                                <span class="badge" id="heroYear">2023</span>
+                                <span class="badge dev" id="heroDev">Empresa</span>
                             </div>
-                            <input type="range" min="0" max="10" step="0.1" value="${score}"
-                                oninput="document.getElementById('display-${cat}').innerText = parseFloat(this.value).toFixed(1); atualizarMedia()">
                         </div>
-                    `;
+                    </div>
 
-                    container.innerHTML += html;
-                })
+                    <div class="hero-right">
+                        <div class="score-circle-container">
+                            <div class="score-bg-wallpaper" id="scoreBg"></div>
+                            <span class="score-value" id="bigScore">0.0</span>
+                            <svg class="score-svg" viewBox="0 0 220 220">
+                                <circle cx="110" cy="110" r="100" class="score-path" id="scoreCirclePath"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="game-details-container">
+            
 
-                document.getElementById('rateModal').style.display = 'flex';
+            <div class="content-grid">
+                <div class="evaluation-section">
+                    <div class="radar-chart-box">
+                        <svg id="radarSvg" viewBox="0 0 600 600"></svg>
+                    </div>
+                    <div class="sliders-box" id="slidersContainer"></div>
+                </div>
+
+                <div class="specs-card">
+                    <h2>Ficha Técnica</h2>
+                    <div id="specsContainer"></div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="action-btn" onclick="saveRating()">SALVAR AVALIAÇÃO</button>
+            </div>
+        </div>
+    </div>
+    <div id="updateImageModal" class="modal" style="z-index: 4000;">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close-modal-btn" onclick="closeUpdateImageModal()">&times;</span>
+        <h2>Alterar Capa</h2>
+        <p style="color:#aaa; font-size: 0.9em;">Cole o link da nova imagem abaixo:</p>
+        
+        <input type="text" id="newImageUrl" placeholder="https://..." style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+        
+        <button class="action-btn" style="width: 100%;" onclick="saveNewImage()">Confirmar Troca</button>
+    </div>
+</div>
+    <script>
+
+        const apiKey = "659f608e6583403b8169a8b08d831fca";
+        
+        // NOVA ORDEM PARA NÃO CORTAR TEXTO
+        const categoryColors = {
+            "Campanha": "#ff4081",
+            "Visual": "#ffea00",  
+            "Personagens": "#2979ff",
+            "Trilha Sonora": "#d500f9",
+            "Jogabilidade": "#00e676",  
+            "Diversão": "#ff9100", 
+        };                         
+
+        const categoryIcons = {
+            "Campanha": "https://img.icons8.com/color/48/story-book.png",
+            "Jogabilidade": "https://img.icons8.com/color/48/controller.png",
+            "Personagens": "https://img.icons8.com/color/48/user-group-man-man.png",
+            "Visual": "https://img.icons8.com/color/48/monitor.png",
+            "Trilha Sonora": "https://img.icons8.com/color/48/musical-notes.png",
+            "Diversão": "https://img.icons8.com/color/48/confetti.png"
+        };
+        const categories = Object.keys(categoryColors);
+
+        let currentGameId = null;
+
+        // INICIALIZAÇÃO HÍBRIDA
+        let legacyGames = JSON.parse(localStorage.getItem('meusJogosSalvos')) || [];
+        let newGames = JSON.parse(localStorage.getItem('myGamesLibrary')) || [];
+
+        let games = [
+            ...newGames,
+            ...legacyGames.map(g => ({
+                ...g,
+                isLegacy: true, 
+                imageCapa: g.imageCapa || g.image,
+                imageFundo: g.imageFundo || g.image 
+            }))
+        ];
+        
+        // Remove duplicatas visuais
+        games = games.filter((game, index, self) =>
+            index === self.findIndex((t) => t.id === game.id)
+        );
+
+        // FUNÇÃO DE LIMPEZA CENTRALIZADA
+        function checkAndCleanLegacy() {
+            if (window.oldLegacyId) {
+                legacyGames = legacyGames.filter(g => g.id !== window.oldLegacyId);
+                localStorage.setItem('meusJogosSalvos', JSON.stringify(legacyGames));
+                games = games.filter(g => g.id !== window.oldLegacyId); 
+                window.oldLegacyId = null;
             }
-                //SEÇÃO DE NOTA
-        function atualizarMedia(){
-            const sliders = document.querySelectorAll('#slidersContainer input[type="range"]');
-
-            let soma = 0;
-            let quantidade = 0;
-
-            sliders.forEach(slider => {
-                soma += parseFloat(slider.value); //purseFloat servindo pra transformar texto em numero
-                quantidade++
-            })
-
-            const media = soma/quantidade;
-
-            document.getElementById('finalScore').innerText = media.toFixed(1);
-        }
-        function openEditNameModal(){
-            const game = games.find(g => g.id === currentGameId);
-            document.getElementById('editNameInput').value = game.name;
-            document.getElementById('editNameModal').style.display = 'flex';
         }
 
-        function confirmNameChange(){
-            const newName = document.getElementById('editNameInput').value;
-            if(!newName) return alert("Digite um nome!");
-
-            const game = games.find(g => g.id === currentGameId);
-            game.name = newName;
-
-            document.getElementById('rateGameTitle').innerText = newName;
+        function renderGrid(filterText = '') {
+            const grid = document.getElementById('gamesList');
+            grid.innerHTML = '';
             
-            salvarDados();
-            renderGames();
-            document.getElementById('editNameModal').style.display='none';
+            const filteredGames = games.filter(g => g.name.toLowerCase().includes(filterText.toLowerCase()));
+
+            filteredGames.forEach(game => {
+                const nota = parseFloat(game.average) || 0;
+                let corDaNota = '#00e676';
+
+                if (nota < 5) {
+                    corDaNota = '#ff4081';
+                } else if (nota < 8) {
+                    corDaNota = '#ffeb3b';
+                }
+                grid.innerHTML += `
+                    <div class="game-card" onclick="openGameModal(${game.id})">
+                        <div class="game-score-badge" style="border-color: ${corDaNota}; color: ${corDaNota}; box-shadow: 0 0 5px ${corDaNota}">${game.average || 0}</div>
+                        <img src="${game.imageCapa}" class="game-cover">
+                        <div class="game-info">
+                            <h3>${game.name}</h3>
+                            <span style="color:#aaa; font-size:0.8em;">${game.developers || 'Desconhecido'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function filterGames(val) { renderGrid(val); }
+        function openAddModal(){ document.getElementById('addModal').style.display = 'block'; }
+        
+        function switchTab(t){
+            document.getElementById('sectionSearch').style.display = t === 'search' ? 'block' : 'none';
+            document.getElementById('sectionManual').style.display = t === 'manual' ? 'block' : 'none';
+            document.getElementById('btnTabSearch').className = t === 'search' ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('btnTabManual').className = t === 'manual' ? 'tab-btn active' : 'tab-btn';
         }
 
-        function openEditImageModal() {
-            const game = games.find(g => g.id === currentGameId);
-            document.getElementById('editImageInput').value = game.image;
-            document.getElementById('editImageModal').style.display='flex';
-        }
+        function saveManualGame() {
+            const name = document.getElementById('manualName').value;
+            const imgCapa = document.getElementById('manualImageCapa').value;
+            const imgBg = document.getElementById('manualImageBg').value;
+            const developer = document.getElementById('manualDevelopers').value;
 
-        function confirmImageChange() {
-            const newImage = document.getElementById('editImageInput').value;
-            if(!newImage) return alert("Põe um link!");
-
-            const game = games.find(g => g.id === currentGameId);
-            game.image =newImage;
-
-            document.getElementById('rateGameCover').src = newImage;
-
-            salvarDados();
-            renderGames();
-            document.getElementById('editImageModal').style.display='none';
-        }
-
-        function saveRating() {
-            atualizarMedia();
+            if(!name) return alert("Digite o nome!");
             
-            const game = games.find(g => g.id === currentGameId);
-            const notaTexto = document.getElementById('finalScore').innerText;
-            game.average = notaTexto;
-
-            const sliders = document.querySelectorAll('#slidersContainer input[type="range"]');
-            if(!game.scores) game.scores = {};
-
-            sliders.forEach((slider, cat) => {
-                const catName = categories[cat];
-                game.scores[catName] = parseFloat(slider.value);
+            games.push({
+                id: Date.now(),
+                name: name,
+                imageCapa: imgCapa || 'https://via.placeholder.com/300',
+                imageFundo: imgBg || imgCapa,
+                developers: developer || 'Desconhecido',
+                average: 0,
+                scores: {}
             });
 
-            salvarDados();
-            renderGames();
-            closeModals();
+            checkAndCleanLegacy();
+            const gamesToSave = games.filter(g => !g.isLegacy);
+            localStorage.setItem('myGamesLibrary', JSON.stringify(gamesToSave));
+
+            renderGrid();
+            document.getElementById('addModal').style.display = 'none';
+            
+            document.getElementById('manualName').value = '';
+            document.getElementById('manualImageCapa').value = '';
+            document.getElementById('manualImageBg').value = '';
+            document.getElementById('manualDevelopers').value = '';
+        }
+
+        let searchTimeout;
+        async function searchOnlineGames(query) {
+            if (query.length < 3) return;
+            clearTimeout(searchTimeout);
+
+            searchTimeout = setTimeout(async () => {
+                const list = document.getElementById('apiResultsList');
+                list.innerHTML = '<div style="color:white; padding:10px;"> Buscando...</div>';
+
+                try {
+                    const res = await fetch(`https://api.rawg.io/api/games?key=${apiKey}&search=${query}&page_size=5`);
+                    const data = await res.json();
+                    list.innerHTML= '';
+
+                    data.results.forEach(game => {
+                        const div = document.createElement('div');
+                        div.className = 'api-result-item';
+                        div.innerHTML = `
+                            <img src="${game.background_image || 'https://via.placeholder.com/50'}">
+                            <div style="color:white;">
+                                <strong>${game.name}</strong><br>
+                                <span style="font-size:0.8em; color:#aaa;">${game.released ? game.released.split('-')[0] : 'N/A'}</span>
+                            </div>
+                        `;
+                        div.onclick = () => addGameFromApi(game.id);
+                        list.appendChild(div);
+                    });
+                } catch(e) { list.innerHTML = 'Erro na API'; }
+            }, 500);
+        }
+        async function getCoverByNameFromSGDB(gameName, year) {
+            const sgdbKey = '0739ab8606d317ba6a48276924da00ce'; 
+            const headers = { 'Authorization': `Bearer ${sgdbKey}` };
+
+            const searchQuery = year ? `${gameName} ${year}` : gameName;
+
+            const searchUrl = `https://www.steamgriddb.com/api/v2/search/autocomplete/${encodeURIComponent(searchQuery)}`;
+            const proxySearch = `https://corsproxy.io/?${encodeURIComponent(searchUrl)}`;
+
+            try {
+                const searchRes = await fetch(proxySearch, { headers: headers });
+                const searchData = await searchRes.json();
+
+                if (searchData.success && searchData.data && searchData.data.length > 0) {
+                    const target = gameName.toLowerCase().trim();
+                    const targetHasRemake = target.includes('remake');
+                    
+                    const scoredMatches = searchData.data.map(game => {
+                        const name = game.name.toLowerCase().trim();
+                        let score = 0;
+
+                        const yearMatch = name.match(/\d{4}/);
+                        const resultYear = yearMatch ? yearMatch[0] : null;
+
+                        if (year && resultYear) {
+                            if (resultYear === year) score += 1000;
+                            else score -= 1500; 
+                        }
+
+                        const keywords = ['remake', 'wii', 'edition', 'hd', 'Enhanced Edition'];
+
+                        keywords.forEach(key => {
+                            const targetHasKey = target.includes(key);
+                            const resultHasKey = name.includes(key);
+
+                            if (targetHasKey && resultHasKey) {
+                                score += 2000; 
+                            } else if (!targetHasKey && resultHasKey) {
+                                score -= 2000; 
+                            } else if (targetHasKey && !resultHasKey) {
+                                score -= 500;  
+                            }
+                        });
+
+                        const targetWords = target.replace(/[:]/g, '').split(' ').filter(w => w.length > 2);
+                        const matchedWords = targetWords.filter(w => name.includes(w));
+                        
+                        score += (matchedWords.length * 100);
+
+                        if (name.includes(target)) score += 100;
+
+                        return { game, score };
+                    });
+
+                    scoredMatches.sort((a, b) => b.score - a.score);
+                    const winner = scoredMatches[0];
+
+                    if (winner.score < -100) return null;
+
+                    const gridUrl = `https://www.steamgriddb.com/api/v2/grids/game/${winner.game.id}?dimensions=600x900`;
+                    const proxyGrid = `https://corsproxy.io/?${encodeURIComponent(gridUrl)}`;
+                    
+                    const gridRes = await fetch(proxyGrid, { headers: headers });
+                    const gridData = await gridRes.json();
+
+                    if (gridData.success && gridData.data && gridData.data.length > 0) {
+                        return gridData.data[0].url;
+                    }
+                }
+            } catch (e) {
+                console.error("Erro na busca:", e);
+            }
+            return null;
+        }
+        async function addGameFromApi(id) {
+            try {
+                const res = await fetch(`https://api.rawg.io/api/games/${id}?key=${apiKey}`);
+                const details = await res.json();
+
+                let finalCover = details.background_image;
+                let sgdbCover = null; 
+
+                // TENTATIVA 1: Via ID da Steam
+                if (details.stores && details.stores.length > 0) {
+                    const steamStore = details.stores.find(s => s.store.slug === 'steam');
+                    if (steamStore && steamStore.url) {
+                        const steamIdMatch = steamStore.url.match(/\/app\/(\d+)/);
+                        if (steamIdMatch) {
+                            sgdbCover = await getSteamGridDBCover(steamIdMatch[1]);
+                        }
+                    }
+                }
+
+                // TENTATIVA 2: Se a Tentativa 1 falhou, busca pelo NOME
+                if (!sgdbCover) {
+                    const releaseYear = details.released ? details.released.split('-')[0] : '';
+                    sgdbCover = await getCoverByNameFromSGDB(details.name, releaseYear);
+                }
+
+                if (sgdbCover) {
+                    finalCover = sgdbCover;
+                }
+
+                const newGame = {
+                    id: details.id,
+                    name: details.name,
+                    imageCapa: finalCover || 'https://via.placeholder.com/300x450', 
+                    imageFundo: details.background_image_additional || details.background_image,
+                    released: details.released,
+                    developers: details.developers.map(d => d.name).join(', '),
+                    publishers: details.publishers.map(p => p.name).join(', '),
+                    platforms: details.platforms.map(p => p.platform.name).join(', '),
+                    genres: details.genres.map(g => g.name).join(', '),
+                    website: details.website,
+                    scores: {},
+                    average: 0
+                };
+
+                if(!games.find(g => g.id === newGame.id)) {
+                    games.push(newGame);
+                    checkAndCleanLegacy();
+                    const gamesToSave = games.filter(g => !g.isLegacy);
+                    localStorage.setItem('myGamesLibrary', JSON.stringify(gamesToSave));
+                    renderGrid();
+                } else {
+                    alert("Você já tem esse jogo!");
+                }
+                
+                document.getElementById('addModal').style.display = 'none';
+                document.getElementById('apiResultsList').innerHTML = '';
+                document.getElementById('apiSearchInput').value = '';
+
+            } catch(e) {
+                alert("Erro ao pegar detalhes do Jogo.");
+            }
+        }
+
+        function openGameModal(id) {
+            currentGameId = id;
+            const game = games.find(g => g.id === id);
+
+            if (game.isLegacy) {
+                alert("Este jogo é da versão antiga. Vamos atualizar as informações dele!");
+                openUpdateLegacyModal(game);
+                return;
+            }
+
+            document.getElementById('heroBg').style.backgroundImage = `url('${game.imageFundo}')`;
+            document.getElementById('heroCover').src = game.imageCapa;
+            document.getElementById('heroTitle').innerText = game.name;
+            document.getElementById('heroYear').innerText = game.released ? game.released.split('-')[0] : '???';
+            document.getElementById('heroDev').innerText = game.developers ? game.developers.split(',')[0] : 'N/A';
+
+            const specsMap = [
+                { label: "Plataformas", val: game.platforms },
+                { label: "Gênero", val: game.genres },
+                { label: "Publicadora", val: game.publishers },
+                { label: "Site", val: game.website ? `<a href="${game.website}" target="_blank" style="color:var(--primary)">Visitar</a>` : null }
+            ];
+            const specsContainer = document.getElementById('specsContainer');
+            specsContainer.innerHTML = '';
+            specsMap.forEach(spec => {
+                if(spec.val) {
+                    specsContainer.innerHTML += `
+                        <div class="spec-item">
+                            <span class="spec-label">${spec.label}</span>
+                            <span class="spec-value">${spec.val}</span>
+                        </div>`;
+                }
+            });
+
+            const slidersContainer = document.getElementById('slidersContainer');
+            slidersContainer.innerHTML = '';
+            if(!game.scores) game.scores = {};
+
+            categories.forEach(cat => {
+                const score = game.scores[cat] || 0;
+                const color = categoryColors[cat];
+                slidersContainer.innerHTML += `
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span style="color:${color}">${cat}</span>
+                            <span id="val-${cat}">${score}</span>
+                        </div>
+                        <input type="range" min="0" max="10" step="0.1" value="${score}"
+                               oninput="updateVal('${cat}', this.value)"
+                               style="--slider-color:${color}; width:100%;">
+                    </div>`;
+            });
+
+            drawRadarChart();
+            updateBigScore();
+            document.getElementById('gameModal').style.display = 'block';
+        }
+
+        function closeGameModal() { document.getElementById('gameModal').style.display = 'none'; }
+
+        function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+            const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+            return {
+                x: centerX + (radius * Math.cos(angleInRadians)),
+                y: centerY + (radius * Math.sin(angleInRadians))
+            };
+        }
+
+        function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
+            const start = {
+                inner: polarToCartesian(x, y, innerRadius, startAngle + 90),
+                outer: polarToCartesian(x, y, outerRadius, startAngle + 90)
+            };
+            const end = {
+                inner: polarToCartesian(x, y, innerRadius, endAngle + 90),
+                outer: polarToCartesian(x, y, outerRadius, endAngle + 90)
+            };
+            const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+            
+            return [
+                "M", start.outer.x, start.outer.y,
+                "A", outerRadius, outerRadius, 0, largeArcFlag, 1, end.outer.x, end.outer.y,
+                "L", end.inner.x, end.inner.y,
+                "A", innerRadius, innerRadius, 0, largeArcFlag, 0, start.inner.x, start.inner.y,
+                "Z"
+            ].join(" ");
+        }
+
+        function drawRadarChart() {
+            const game = games.find(g => g.id === currentGameId);
+            const svg = document.getElementById('radarSvg');
+            svg.innerHTML = ''; 
+
+            const centerX = 300;
+            const centerY = 300;
+            const innerRadius = 30;
+            const maxRadius = 200; 
+            const levels = 10;
+            const ringWidth = (maxRadius - innerRadius) / levels;
+
+            categories.forEach((cat, catIndex) => {
+                const score = game.scores[cat] || 0;
+                const color = categoryColors[cat];
+                const icon = categoryIcons[cat]; 
+
+                const angleStep = 360 / categories.length;
+                const startAngle = (catIndex * angleStep) - 90;
+                const endAngle = ((catIndex + 1) * angleStep) - 90;
+                
+                const gap = 4;
+                const renderStart = startAngle + (gap/2);
+                const renderEnd = endAngle - (gap/2);
+
+                for (let i = 1; i <= levels; i++) {
+                    const rInner = innerRadius + ((i - 1) * ringWidth) + 2;
+                    const rOuter = innerRadius + (i * ringWidth);
+                    
+                    const pathData = describeArc(centerX, centerY, rInner, rOuter, renderStart, renderEnd);
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("d", pathData);
+
+                    if (i <= Math.ceil(score)) {
+                        path.setAttribute("fill", color);
+                        path.setAttribute("filter", "drop-shadow(0 0 2px rgba(0,0,0,0.5))");
+                    } else {
+                        path.setAttribute("fill", "#2a2a2a");
+                        path.setAttribute("opacity", "0.3");
+                    }
+                    svg.appendChild(path);
+                }
+
+                const midAngle = startAngle + (angleStep / 2);
+                const labelPos = polarToCartesian(centerX, centerY, maxRadius + 40, midAngle + 90);
+                const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+                const fw = 140; 
+                const fh = 70;
+                
+                foreignObject.setAttribute("width", fw);
+                foreignObject.setAttribute("height", fh);
+                foreignObject.setAttribute("x", labelPos.x - (fw/2));
+                foreignObject.setAttribute("y", labelPos.y - (fh/2));
+
+                foreignObject.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; line-height: 1.1;">
+                        <img src="${icon}" style="width: 35px; height: 35px; margin-bottom: 2px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));">
+                        <span style="font-size: 16px; color: ${color}; font-weight: bold; text-shadow: 2px 2px 4px black; letter-spacing: 0.5px; word-wrap: break-word;">${cat.toUpperCase()}</span>
+                    </div>
+                `;
+
+                svg.appendChild(foreignObject);
+            });
+        }
+        
+        function updateVal(cat, val){
+            document.getElementById(`val-${cat}`).innerText = val;
+            const game = games.find(g => g.id === currentGameId);
+            game.scores[cat] = parseFloat(val);
+            drawRadarChart();
+            updateBigScore();
+        }
+
+        function updateBigScore(){
+            const game = games.find(g => g.id === currentGameId);
+            let sum = 0, count = 0;
+            categories.forEach(cat => {
+                sum += (game.scores[cat] || 0);
+                count++;
+            });
+            const avg = count > 0 ? (sum / count).toFixed(1) : 0;
+            game.average = avg;
+            
+            document.getElementById('bigScore').innerText = avg;
+
+            const maxDash = 630;
+            const offset = maxDash - ((avg / 10) * maxDash);
+            const circle = document.getElementById('scoreCirclePath');
+            circle.style.strokeDashoffset = offset;
+
+            if(avg < 5) circle.style.stroke = '#ff4081';
+            else if(avg < 8) circle.style.stroke = '#ffeb3b';
+            else circle.style.stroke = '#00e676';
             
         }
 
-        function salvarDados() {
-            localStorage.setItem('meusJogosSalvos', JSON.stringify(games));
+
+        function saveRating() {
+            const gamesToSave = games.filter(g => !g.isLegacy);
+            localStorage.setItem('myGamesLibrary', JSON.stringify(gamesToSave));
+            renderGrid();
+            closeGameModal();
         }
-        </script>
-    </body>
-    </html>
+        
+        renderGrid();
+
+        function openUpdateImageModal() {
+            const game = games.find(g => g.id === currentGameId);
+            document.getElementById('newImageUrl').value = game.imageCapa; 
+            document.getElementById('updateImageModal').style.display = 'block';
+        }
+
+        function closeUpdateImageModal() {
+            document.getElementById('updateImageModal').style.display = 'none';
+        }
+
+        function saveNewImage() {
+            const url = document.getElementById('newImageUrl').value;
+            if (!url) return alert("Por favor, cole uma URL válida!");
+
+            const game = games.find(g => g.id === currentGameId);
+            game.imageCapa = url;
+
+            const gamesToSave = games.filter(g => !g.isLegacy);
+            localStorage.setItem('myGamesLibrary', JSON.stringify(gamesToSave));
+
+            document.getElementById('heroCover').src = url; 
+            renderGrid(); 
+            closeUpdateImageModal();
+        }
+
+        function openUpdateLegacyModal(game) {
+            openAddModal();
+            const apiInput = document.getElementById('apiSearchInput');
+            apiInput.value = game.name;
+            searchOnlineGames(game.name); 
+
+            document.getElementById('manualName').value = game.name;
+            document.getElementById('manualImageCapa').value = game.image; 
+            
+            window.oldLegacyId = game.id;
+        }
+    </script>
+</body>
+</html>
