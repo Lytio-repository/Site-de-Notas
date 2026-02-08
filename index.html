@@ -417,11 +417,10 @@
         <button class="action-btn" style="width: 100%;" onclick="saveNewImage()">Confirmar Troca</button>
     </div>
 </div>
-    <script>
-
+<script>
         const apiKey = "659f608e6583403b8169a8b08d831fca";
         
-        // NOVA ORDEM PARA NÃO CORTAR TEXTO
+        // CORES E CATEGORIAS
         const categoryColors = {
             "Campanha": "#ff4081",
             "Visual": "#ffea00",  
@@ -467,9 +466,24 @@
             if (window.oldLegacyId) {
                 legacyGames = legacyGames.filter(g => g.id !== window.oldLegacyId);
                 localStorage.setItem('meusJogosSalvos', JSON.stringify(legacyGames));
+                
+                // Remove visualmente da lista atual também para não duplicar
                 games = games.filter(g => g.id !== window.oldLegacyId); 
                 window.oldLegacyId = null;
             }
+        }
+
+        function getLegacyScores() {
+            if (window.oldLegacyId) {
+                const oldGame = games.find(g => g.id === window.oldLegacyId);
+                if (oldGame) {
+                    return {
+                        scores: oldGame.scores || {},
+                        average: oldGame.average || 0
+                    };
+                }
+            }
+            return { scores: {}, average: 0 };
         }
 
         function renderGrid(filterText = '') {
@@ -518,14 +532,16 @@
 
             if(!name) return alert("Digite o nome!");
             
+            const legacyData = getLegacyScores();
+
             games.push({
                 id: Date.now(),
                 name: name,
                 imageCapa: imgCapa || 'https://via.placeholder.com/300',
                 imageFundo: imgBg || imgCapa,
                 developers: developer || 'Desconhecido',
-                average: 0,
-                scores: {}
+                average: legacyData.average, 
+                scores: legacyData.scores   
             });
 
             checkAndCleanLegacy();
@@ -571,6 +587,7 @@
                 } catch(e) { list.innerHTML = 'Erro na API'; }
             }, 500);
         }
+
         async function getCoverByNameFromSGDB(gameName, year) {
             const sgdbKey = '0739ab8606d317ba6a48276924da00ce'; 
             const headers = { 'Authorization': `Bearer ${sgdbKey}` };
@@ -586,7 +603,6 @@
 
                 if (searchData.success && searchData.data && searchData.data.length > 0) {
                     const target = gameName.toLowerCase().trim();
-                    const targetHasRemake = target.includes('remake');
                     
                     const scoredMatches = searchData.data.map(game => {
                         const name = game.name.toLowerCase().trim();
@@ -600,28 +616,7 @@
                             else score -= 1500; 
                         }
 
-                        const keywords = ['remake', 'wii', 'edition', 'hd', 'Enhanced Edition'];
-
-                        keywords.forEach(key => {
-                            const targetHasKey = target.includes(key);
-                            const resultHasKey = name.includes(key);
-
-                            if (targetHasKey && resultHasKey) {
-                                score += 2000; 
-                            } else if (!targetHasKey && resultHasKey) {
-                                score -= 2000; 
-                            } else if (targetHasKey && !resultHasKey) {
-                                score -= 500;  
-                            }
-                        });
-
-                        const targetWords = target.replace(/[:]/g, '').split(' ').filter(w => w.length > 2);
-                        const matchedWords = targetWords.filter(w => name.includes(w));
-                        
-                        score += (matchedWords.length * 100);
-
                         if (name.includes(target)) score += 100;
-
                         return { game, score };
                     });
 
@@ -645,6 +640,7 @@
             }
             return null;
         }
+
         async function addGameFromApi(id) {
             try {
                 const res = await fetch(`https://api.rawg.io/api/games/${id}?key=${apiKey}`);
@@ -653,18 +649,15 @@
                 let finalCover = details.background_image;
                 let sgdbCover = null; 
 
-                // TENTATIVA 1: Via ID da Steam
                 if (details.stores && details.stores.length > 0) {
                     const steamStore = details.stores.find(s => s.store.slug === 'steam');
                     if (steamStore && steamStore.url) {
                         const steamIdMatch = steamStore.url.match(/\/app\/(\d+)/);
                         if (steamIdMatch) {
-                            sgdbCover = await getSteamGridDBCover(steamIdMatch[1]);
                         }
                     }
                 }
 
-                // TENTATIVA 2: Se a Tentativa 1 falhou, busca pelo NOME
                 if (!sgdbCover) {
                     const releaseYear = details.released ? details.released.split('-')[0] : '';
                     sgdbCover = await getCoverByNameFromSGDB(details.name, releaseYear);
@@ -673,6 +666,8 @@
                 if (sgdbCover) {
                     finalCover = sgdbCover;
                 }
+
+                const legacyData = getLegacyScores();
 
                 const newGame = {
                     id: details.id,
@@ -685,18 +680,21 @@
                     platforms: details.platforms.map(p => p.platform.name).join(', '),
                     genres: details.genres.map(g => g.name).join(', '),
                     website: details.website,
-                    scores: {},
-                    average: 0
+                    scores: legacyData.scores,   // Usa as notas recuperadas
+                    average: legacyData.average  // Usa a média recuperada
                 };
 
-                if(!games.find(g => g.id === newGame.id)) {
+                // Verifica se o ID novo já existe (para evitar duplicidade de ID API)
+                const existingIndex = games.findIndex(g => g.id === newGame.id);
+                
+                if(existingIndex === -1) {
                     games.push(newGame);
                     checkAndCleanLegacy();
                     const gamesToSave = games.filter(g => !g.isLegacy);
                     localStorage.setItem('myGamesLibrary', JSON.stringify(gamesToSave));
                     renderGrid();
                 } else {
-                    alert("Você já tem esse jogo!");
+                    alert("Você já tem esse jogo na biblioteca nova!");
                 }
                 
                 document.getElementById('addModal').style.display = 'none';
@@ -704,6 +702,7 @@
                 document.getElementById('apiSearchInput').value = '';
 
             } catch(e) {
+                console.error(e);
                 alert("Erro ao pegar detalhes do Jogo.");
             }
         }
