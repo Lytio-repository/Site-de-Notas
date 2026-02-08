@@ -588,17 +588,33 @@
             }, 500);
         }
 
-        async function getCoverByNameFromSGDB(gameName, year) {
+async function getCoverByNameFromSGDB(gameName, year) {
             const sgdbKey = '0739ab8606d317ba6a48276924da00ce'; 
-            const headers = { 'Authorization': `Bearer ${sgdbKey}` };
+            const headers = { 
+                'Authorization': `Bearer ${sgdbKey}`,
+                'x-requested-with': 'XMLHttpRequest' 
+            };
 
             const searchQuery = year ? `${gameName} ${year}` : gameName;
 
+            // URL direta da API
             const searchUrl = `https://www.steamgriddb.com/api/v2/search/autocomplete/${encodeURIComponent(searchQuery)}`;
+            
+            // Usando corsproxy.io (Geralmente o mais estável)
             const proxySearch = `https://corsproxy.io/?${encodeURIComponent(searchUrl)}`;
 
             try {
-                const searchRes = await fetch(proxySearch, { headers: headers });
+                const searchRes = await fetch(proxySearch, { 
+                    headers: headers,
+                    method: 'GET',
+                    referrerPolicy: 'no-referrer', 
+                });
+                
+                if (!searchRes.ok) {
+                    console.error("Erro SGDB Search:", searchRes.status);
+                    return null;
+                }
+
                 const searchData = await searchRes.json();
 
                 if (searchData.success && searchData.data && searchData.data.length > 0) {
@@ -625,10 +641,15 @@
 
                     if (winner.score < -100) return null;
 
+                    // Busca a grade (GRID)
                     const gridUrl = `https://www.steamgriddb.com/api/v2/grids/game/${winner.game.id}?dimensions=600x900`;
                     const proxyGrid = `https://corsproxy.io/?${encodeURIComponent(gridUrl)}`;
                     
-                    const gridRes = await fetch(proxyGrid, { headers: headers });
+                    const gridRes = await fetch(proxyGrid, { 
+                        headers: headers,
+                        referrerPolicy: 'no-referrer'
+                    });
+
                     const gridData = await gridRes.json();
 
                     if (gridData.success && gridData.data && gridData.data.length > 0) {
@@ -636,7 +657,8 @@
                     }
                 }
             } catch (e) {
-                console.error("Erro na busca:", e);
+                console.warn("SteamGridDB falhou (provavelmente bloqueio de CORS no GitHub):", e);
+                return null;
             }
             return null;
         }
